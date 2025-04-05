@@ -12,7 +12,15 @@ type ModelInfo struct {
 
 // 创建映射表（假设用 model 名称作为 key）
 var ModelRegistry = map[string]ModelInfo{
-	"claude-3-7-sonnet": {"agent_sonnet_37", 100000},
+	"claude-3-7-sonnet":          {"agent_sonnet_37", 100000},
+	"claude-3-7-sonnet-thinking": {"agent_sonnet_37", 100000},
+	"claude-3-5-sonnet":          {"agent_sonnet", 100000},
+	"deepseek-r1":                {"agent_deepseek_r1", 100000},
+	"deepseek-v3":                {"deepseek_v3", 100000},
+	"o3-mini":                    {"agent_o3_mini", 100000},
+	"gpt-4o":                     {"gpt4o", 100000},
+	"o1":                         {"o1", 100000},
+	//"gemini-2.0":        {"gemini-2.0", 100000},
 }
 
 // 通过 model 名称查询的方法

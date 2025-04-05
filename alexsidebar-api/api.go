@@ -16,10 +16,10 @@ const (
 
 func MakeStreamChatRequest(c *gin.Context, client cycletls.CycleTLS, jsonData []byte, cookie string) (<-chan cycletls.SSEResponse, error) {
 	//split := strings.Split(cookie, "=")
-	//tokenInfo, ok := config.ASTokenMap[split[0]]
-	//if !ok {
-	//	return nil, fmt.Errorf("cookie not found in ASTokenMap")
-	//}
+	tokenInfo, ok := config.ASTokenMap[cookie]
+	if !ok {
+		return nil, fmt.Errorf("cookie not found in ASTokenMap")
+	}
 
 	options := cycletls.Options{
 		Timeout: 10 * 60 * 60,
@@ -31,7 +31,7 @@ func MakeStreamChatRequest(c *gin.Context, client cycletls.CycleTLS, jsonData []
 			"Content-Type":     "application/json",
 			"app-version":      "2.5.6",
 			"app-build-number": "190",
-			"auth":             cookie,
+			"auth":             tokenInfo.AccessToken,
 			"accept-language":  "zh-CN,zh-Hans;q=0.9",
 			"local-id":         common.GenerateSerialNumber(10),
 		},

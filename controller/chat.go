@@ -223,8 +223,7 @@ func createRequestBody(c *gin.Context, openAIReq *model.OpenAIChatCompletionRequ
 
 	messages := []map[string]interface{}{}
 
-	//isThinkingModel := strings.HasSuffix(modelInfo.Model, "-thinking")
-	isThinkingModel := true
+	isThinkingModel := strings.HasSuffix(openAIReq.Model, "-thinking")
 
 	for i, msg := range openAIReq.Messages {
 		// 将角色转换为首字母大写的格式

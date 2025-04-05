@@ -6,7 +6,6 @@ import (
 	google_api "alexsidebar2api/google-api"
 	"fmt"
 	"github.com/deanxv/CycleTLS/cycletls"
-	"strings"
 	"time"
 )
 
@@ -17,19 +16,17 @@ func UpdateCookieTokenTask() {
 		logger.SysLog("alexsidebar2api Scheduled UpdateCookieTokenTask Task Job Start!")
 
 		for _, cookie := range config.NewCookieManager().Cookies {
-			split := strings.Split(cookie, "=")
-			tokenInfo, ok := config.ASTokenMap[split[0]]
+			tokenInfo, ok := config.ASTokenMap[cookie]
 			if ok {
 				request := google_api.RefreshTokenRequest{
-					Key:          tokenInfo.ApiKey,
 					RefreshToken: tokenInfo.RefreshToken,
 				}
 				token, err := google_api.GetFirebaseToken(request)
 				if err != nil {
 					logger.SysError(fmt.Sprintf("GetFirebaseToken err: %v Req: %v", err, request))
 				} else {
-					config.ASTokenMap[split[0]] = config.ASTokenInfo{
-						ApiKey:       split[0],
+					config.ASTokenMap[cookie] = config.ASTokenInfo{
+						//ApiKey:       split[0],
 						RefreshToken: token.RefreshToken,
 						AccessToken:  token.AccessToken,
 					}

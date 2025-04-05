@@ -12,7 +12,6 @@ import (
 
 // RefreshTokenRequest represents the input parameters
 type RefreshTokenRequest struct {
-	Key          string
 	RefreshToken string
 }
 
@@ -35,7 +34,7 @@ func GetFirebaseToken(req RefreshTokenRequest) (*TokenResponse, error) {
 	data.Set("grant_type", "refresh_token")
 	data.Set("refresh_token", req.RefreshToken)
 
-	request, err := http.NewRequest("POST", apiURL+"?key="+req.Key, strings.NewReader(data.Encode()))
+	request, err := http.NewRequest("POST", apiURL+"?key=AIzaSyB-nqA5j737l5Nd39K6fBit76VIrymqOUg", strings.NewReader(data.Encode()))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %v err: %v", request, err)
 	}

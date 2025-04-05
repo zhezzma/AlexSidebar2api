@@ -2,7 +2,9 @@ package config
 
 import (
 	"alexsidebar2api/common/env"
+	google_api "alexsidebar2api/google-api"
 	"errors"
+	"fmt"
 	"math/rand"
 	"os"
 	"strings"
@@ -59,7 +61,7 @@ func AddRateLimitCookie(cookie string, expirationTime time.Time) {
 }
 
 type ASTokenInfo struct {
-	ApiKey       string
+	//ApiKey       string
 	RefreshToken string
 	AccessToken  string
 }
@@ -82,28 +84,22 @@ func InitASCookies() ([]string, error) {
 
 		for _, cookie := range strings.Split(cookieStr, ",") {
 			cookie = strings.TrimSpace(cookie)
-			//split := strings.Split(cookie, "=")
-			//if len(split) != 2 {
-			//	return nil, fmt.Errorf("invalid cookie format: %s", cookie)
-			//}
-			//request := google_api.RefreshTokenRequest{
-			//	Key:          split[0],
-			//	RefreshToken: split[1],
-			//}
-			//
-			//response, err := google_api.GetFirebaseToken(request)
-			//if err != nil {
-			//	return nil, fmt.Errorf("GetFirebaseToken err %v , Req: %v", err, request)
-			//}
-			//ASTokenMap[split[0]] = ASTokenInfo{
-			//	ApiKey:       split[0],
-			//	RefreshToken: response.RefreshToken,
-			//	AccessToken:  response.AccessToken,
-			//}
+			request := google_api.RefreshTokenRequest{
+				RefreshToken: cookie,
+			}
+
+			response, err := google_api.GetFirebaseToken(request)
+			if err != nil {
+				return nil, fmt.Errorf("GetFirebaseToken err %v , Req: %v", err, request)
+			}
+			ASTokenMap[cookie] = ASTokenInfo{
+				RefreshToken: response.RefreshToken,
+				AccessToken:  response.AccessToken,
+			}
 			ASTokenMap[cookie] = ASTokenInfo{
 				//ApiKey:       split[0],
-				//RefreshToken: response.RefreshToken,
-				AccessToken: cookie,
+				RefreshToken: response.RefreshToken,
+				AccessToken:  response.AccessToken,
 			}
 			ASCookies = append(ASCookies, cookie)
 		}

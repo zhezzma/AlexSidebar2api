@@ -9,6 +9,7 @@ import (
 	"alexsidebar2api/common"
 	"alexsidebar2api/common/config"
 	logger "alexsidebar2api/common/loggger"
+	"alexsidebar2api/job"
 	"alexsidebar2api/middleware"
 	"alexsidebar2api/model"
 	"alexsidebar2api/router"
@@ -59,7 +60,7 @@ func main() {
 	}
 
 	logger.SysLog("alexsidebar2api start success. enjoy it! ^_^\n")
-	//go job.UpdateCookieTokenTask()
+	go job.UpdateCookieTokenTask()
 
 	err = server.Run(":" + port)
 
