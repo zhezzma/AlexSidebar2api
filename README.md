@@ -152,7 +152,7 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 ![img_1.png](docs/img_1.png)
 3. 点击注册后提示已发送验证邮件,检查邮箱的邮件并验证链接。
 ![img_3.png](docs/img_3.png)
-4. 验证通过后即可查询账号信息即用量情况。
+4. 验证通过后即可查询账号信息即用量情况(有延迟,一次查询不到可多查询几次)。
 ![img_4.png](docs/img_4.png)
 5. Refresh Token即所需cookie值,即环境变量`AS_COOKIE`,点击右侧复制按钮即可复制到粘贴板。
 
