@@ -1,6 +1,6 @@
-// @title KILO-AI-2API
+// @title ASB-AI-2API
 // @version 1.0.0
-// @description KILO-AI-2API
+// @description ASB-AI-2API
 // @BasePath
 package main
 

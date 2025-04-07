@@ -3,7 +3,7 @@
 </p>
 <div align="center">
 
-# alexsidebar2api
+# AlexSideBar2api
 
 _觉得有点意思的话 别忘了点个 ⭐_
 
@@ -23,7 +23,6 @@ _觉得有点意思的话 别忘了点个 ⭐_
 - [x] 支持自定义请求头校验值(Authorization)
 - [x] 支持cookie池(随机),详情查看[获取cookie](#cookie获取方式)
 - [x] 支持token保活
-- [x] 支持中文对话破限
 - [x] 支持请求失败自动切换cookie重试(需配置cookie池)
 - [x] 可配置代理请求(环境变量`PROXY_URL`)
 
@@ -137,79 +136,25 @@ Render 可以直接部署 docker 镜像,不需要 fork 仓库：[Render](https:/
 ### 环境变量
 
 1. `PORT=10033`  [可选]端口,默认为10033
-4. `AS_COOKIE=******`  cookie (多个请以,分隔)
+2. `AS_COOKIE=******`  cookie (多个请以,分隔)
 3. `API_SECRET=123456`  [可选]接口密钥-修改此行为请求头(Authorization)校验的值(同API-KEY)(多个请以,分隔)
-3. `CHINESE_CHAT_ENABLED=true`  [可选]官方限制中文对话,如需中文多轮对话可开启此项尝试破限。(默认:true)[true:打开、false:关闭]
-2. `DEBUG=true`  [可选]DEBUG模式,可打印更多信息[true:打开、false:关闭]
-6. `PROXY_URL=http://127.0.0.1:10801`  [可选]代理
-5. `REQUEST_RATE_LIMIT=60`  [可选]每分钟下的单ip请求速率限制,默认:60次/min
+4. `DEBUG=true`  [可选]DEBUG模式,可打印更多信息[true:打开、false:关闭]
+5. `PROXY_URL=http://127.0.0.1:10801`  [可选]代理
+6. `REQUEST_RATE_LIMIT=60`  [可选]每分钟下的单ip请求速率限制,默认:60次/min
 7. `ROUTE_PREFIX=hf`  [可选]路由前缀,默认为空,添加该变量后的接口示例:`/hf/v1/chat/completions`
-8. `RATE_LIMIT_COOKIE_LOCK_DURATION=600`  [可选]到达速率限制的cookie禁用时间,默认为60s
 
 ### cookie获取方式
 
-1. 打开[qodo](https://app.qodo.ai/signin)并登录。
-2. 登录成功后打开[qodo](https://app.qodo.ai)
-3. 打开**F12**开发者工具。
-4. 右侧开发者工具-控制台，执行如下代码。
-```
-function getFirebaseCredentials() {
-  const dbRequest = indexedDB.open('firebaseLocalStorageDb');
-  dbRequest.onsuccess = function(event) {
-    const db = event.target.result;
-    const transaction = db.transaction(['firebaseLocalStorage'], 'readonly');
-    const store = transaction.objectStore('firebaseLocalStorage');
-    const getAllKeysRequest = store.getAllKeys();
-    getAllKeysRequest.onsuccess = function(event) {
-      const keys = event.target.result;
-      if (keys.length > 0) {
-        const firstKey = keys[0];
-        const getRequest = store.get(firstKey);
-        getRequest.onsuccess = function(event) {
-          const data = event.target.result;
-          if (data && data.value) {
-            const apiKey = data.value.apiKey;
-            const refreshToken = data.value.stsTokenManager.refreshToken;
-            if (apiKey && refreshToken) {
-              const combinedCredential = apiKey + '=' + refreshToken;
-              const textArea = document.createElement('textarea');
-              textArea.value = combinedCredential;
-              textArea.style.position = 'fixed';
-              textArea.style.left = '-999999px';
-              document.body.appendChild(textArea);
-              textArea.select();
-              document.execCommand('copy');
-              document.body.removeChild(textArea);              
-              console.log(combinedCredential);
-              console.log('Copied!!!');
-            } else {
-              console.error('Unable to find API Key or Refresh Token');
-            }
-          } else {
-            console.error('Incorrect data format');
-          }
-        };        
-        getRequest.onerror = function(event) {
-          console.error('Error retrieving data:', event.target.error);
-        };
-      } else {
-        console.error('No keys found.');
-      }
-    };    
-    getAllKeysRequest.onerror = function(event) {
-      console.error('Error retrieving key list:', event.target.error);
-    };
-  };  
-  dbRequest.onerror = function(event) {
-    console.error('Error occurred when opening the database:', event.target.error);
-  };  
-  return "Retrieving the required credentials...";
-}
-getFirebaseCredentials();
-```
-<span><img src="docs/img.png" width="800"/></span>
+> **序列号与账号绑定**,每次查询都需要**序列号**,请妥善保存！！！
 
-5. 打印的值即所需cookie值,即环境变量`AS_COOKIE`,无需手动复制,会自动复制到粘贴板。
+1. 打开[AlexSideBar账户查询系统](https://asb.aytsao.cn/)。
+2. 填入邮箱、密码、序列号(建议生成)。
+![img_1.png](docs/img_1.png)
+3. 点击注册后提示已发送验证邮件,检查邮箱的邮件并验证链接。
+![img_3.png](docs/img_3.png)
+4. 验证通过后即可查询账号信息即用量情况。
+![img_4.png](docs/img_4.png)
+5. Refresh Token即所需cookie值,即环境变量`AS_COOKIE`,点击右侧复制按钮即可复制到粘贴板。
 
 ## 进阶配置
 
@@ -217,26 +162,24 @@ getFirebaseCredentials();
 
 ## 支持模型
 
-新用户注册即可获赠**14**天试用。
+用户每月200次对话额度。
 
-| 模型名称              |
-|-------------------|
-| claude-3-7-sonnet |
-| claude-3-5-sonnet |
-| deepseek-r1       |
-| deepseek-r1-32b   |
-| gpt-4o            |
-| o1                |
-| o3-mini           |
-| o3-mini-high      |
-| gemini-2.5-pro    |
-| gemini-2.0-flash  |
+| 模型名称                       |
+|----------------------------|
+| claude-3-7-sonnet          |
+| claude-3-7-sonnet-thinking |
+| claude-3-5-sonnet          |
+| deepseek-r1                |
+| deepseek-v3                |
+| o3-mini                    |
+| gpt-4o                     |
+| o1                         |
 
 ## 报错排查
 
-> `Detected that you are using Chinese for conversation, please use English for conversation.`
+> `代码格式错版`
 
-官方限制了中文对话,如需中文多轮对话可开启环境变量`CHINESE_CHAT_ENABLED`尝试破限。
+官方返回结构复杂,无解。
 
 > `输出URL编码的内容`
 
