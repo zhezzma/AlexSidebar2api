@@ -223,6 +223,18 @@ func (r *OpenAIChatCompletionRequest) GetUserContent() []string {
 
 	return userContent
 }
+
+func (r *OpenAIChatCompletionRequest) GetFirstSystemContent() string {
+	for _, msg := range r.Messages {
+		if msg.Role == "system" {
+			if content, ok := msg.Content.(string); ok {
+				return content
+			}
+		}
+	}
+	return ""
+}
+
 func (r *OpenAIChatCompletionRequest) GetPreviousMessagePair() (string, bool, error) {
 	messages := r.Messages
 	if len(messages) < 3 {

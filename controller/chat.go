@@ -209,9 +209,11 @@ func createRequestBody(c *gin.Context, openAIReq *model.OpenAIChatCompletionRequ
 
 	logger.Debug(c.Request.Context(), fmt.Sprintf("RequestBody: %v", openAIReq))
 
+	systemContent := openAIReq.GetFirstSystemContent()
+
 	requestBody := map[string]interface{}{
 		"model":  modelInfo.Model,
-		"prompt": "",
+		"prompt": systemContent,
 		"api_keys": map[string]string{
 			"anthropic":  "",
 			"perplexity": "",
@@ -544,7 +546,7 @@ func processStreamData(c *gin.Context, data, responseId, model string, jsonData 
 	var textDelta string
 	if textObj, ok := section["text"].(map[string]interface{}); ok && textObj != nil {
 		if text, ok := textObj["text"].(string); ok && text != "" {
-			textDelta = getTextDelta(text, lastText)
+			textDelta = getTextDelta(c, text, lastText)
 
 			if textDelta != "" {
 				if err := handleDelta(c, textDelta, responseId, model, jsonData); err != nil {
@@ -594,7 +596,7 @@ func processStreamData(c *gin.Context, data, responseId, model string, jsonData 
 }
 
 // 获取文本增量
-func getTextDelta(currentText string, lastText *string) string {
+func getTextDelta(c *gin.Context, currentText string, lastText *string) string {
 	if *lastText == "" {
 		return currentText
 	}
@@ -610,6 +612,8 @@ func getTextDelta(currentText string, lastText *string) string {
 		}
 		return currentText[len(*lastText):]
 	}
+
+	logger.Debug(c.Request.Context(), fmt.Sprintf("lastText: %s, currentText: %s", *lastText, currentText))
 
 	return "\n" + currentText
 }
@@ -661,7 +665,7 @@ func processNoStreamData(c *gin.Context, data string, thinkStartType *bool, thin
 	var textDelta string
 	if textObj, ok := section["text"].(map[string]interface{}); ok && textObj != nil {
 		if text, ok := textObj["text"].(string); ok && text != "" {
-			textDelta = getTextDelta(text, lastText)
+			textDelta = getTextDelta(nil, text, lastText)
 
 			if textDelta != "" {
 
