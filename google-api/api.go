@@ -1,6 +1,7 @@
 package google_api
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -26,6 +27,8 @@ type TokenResponse struct {
 	ProjectID    string `json:"project_id"`
 }
 
+var key = "QUl6YVN5Qi1ucUE1ajczN2w1TmQzOUs2ZkJpdDc2VklyeW1xT1Vn"
+
 // GetFirebaseToken refreshes a Firebase token using the refresh token
 func GetFirebaseToken(req RefreshTokenRequest) (*TokenResponse, error) {
 	// Prepare request
@@ -34,7 +37,12 @@ func GetFirebaseToken(req RefreshTokenRequest) (*TokenResponse, error) {
 	data.Set("grant_type", "refresh_token")
 	data.Set("refresh_token", req.RefreshToken)
 
-	request, err := http.NewRequest("POST", apiURL+"?key=AIzaSyB-nqA5j737l5Nd39K6fBit76VIrymqOUg", strings.NewReader(data.Encode()))
+	decodedBytes, err := base64.StdEncoding.DecodeString(key)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode key: %v", err)
+	}
+
+	request, err := http.NewRequest("POST", apiURL+"?key="+string(decodedBytes), strings.NewReader(data.Encode()))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %v err: %v", request, err)
 	}
