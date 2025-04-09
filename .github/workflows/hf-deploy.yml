@@ -21,7 +21,7 @@ jobs:
       - name: Update Dockerfile port
         run: |
           if [ -f Dockerfile ]; then
-            sed -i 's/EXPOSE 10022/EXPOSE 7860/g' Dockerfile
+            sed -i 's/EXPOSE 10033/EXPOSE 7860/g' Dockerfile
             echo "Dockerfile 已更新: 端口从 10033 更改为 7860"
           else
             echo "未找到 Dockerfile"
