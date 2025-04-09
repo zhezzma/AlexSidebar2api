@@ -1,0 +1,50 @@
+name: Deploy to HF Spaces
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      # 配置 Git
+      - name: Configure Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      # 修改 Dockerfile 中的端口
+      - name: Update Dockerfile port
+        run: |
+          if [ -f Dockerfile ]; then
+            sed -i 's/EXPOSE 10022/EXPOSE 7860/g' Dockerfile
+            echo "Dockerfile 已更新: 端口从 10033 更改为 7860"
+          else
+            echo "未找到 Dockerfile"
+          fi
+
+      # 克隆 HF Space 仓库并复制文件
+      - name: Clone HF Space
+        run: |
+          cd ..
+          git clone https://zhepama:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/zhepama/alexSidebar2api hf-repo
+          
+          # 使用 rsync 复制文件，排除不需要的文件
+          rsync -av --exclude='.git' \
+                    --exclude='.github' \
+                    --exclude='.gitignore' \
+                    --exclude='README.md' \
+                    $GITHUB_WORKSPACE/ hf-repo/
+          
+          cd hf-repo
+          git lfs install
+          git lfs track "*.png"
+          git lfs track "*.webp"
+          git add .gitattributes
+          git add .
+          git commit -m "Update from GitHub Actions"
+          git push
